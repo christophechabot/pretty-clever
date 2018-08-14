@@ -39,6 +39,7 @@
     <Rounds/>
     <Rerolls/>
     <PlusOnes/>
+    <YellowBlock/>
     <GreenBlock/>
     <RedBlock/>
     <PurpleBlock/>
@@ -50,6 +51,7 @@ import Rounds from '@/components/Rounds';
 import Rerolls from '@/components/Rerolls';
 import PlusOnes from '@/components/PlusOnes';
 
+import YellowBlock from '@/components/YellowBlock';
 import GreenBlock from '@/components/GreenBlock';
 import RedBlock from '@/components/RedBlock';
 import PurpleBlock from '@/components/PurpleBlock';
@@ -67,6 +69,7 @@ export default {
     Rounds,
     Rerolls,
     PlusOnes,
+    YellowBlock,
     GreenBlock,
     RedBlock,
     PurpleBlock

@@ -8,6 +8,10 @@ export default new Vuex.Store({
     rounds: [],
     rerolls: [],
     plusOnes: [],
+    yellowBoxes: [],
+    yellowBoxesHorizontalBonuses: [],
+    yellowBoxesVerticalBonuses: [],
+    yellowBoxesDiagonalBonuses: [],
     greenBoxes: [],
     redBoxes: [],
     purpleBoxes: []
@@ -40,6 +44,32 @@ export default new Vuex.Store({
         ...Array.from(new Array(7), () => ({ 
           available: false,
           value: false
+        }))
+      ];
+
+      //////////
+      // Yellow
+      //////////
+      const yellowBoxesLabels = ['3', '6', '5', '', '2', '1', '', '5', '1', '', '2', '4', '', '3', '4', '6'];
+      state.yellowBoxesHorizontalBonuses = [
+        { color: 'blue', type: 'blue', highlighted: false },
+        { color: 'red', type: 'red', value: 4, highlighted: false },
+        { color: 'green', type: 'green', highlighted: false },
+        { type: 'fox', highlighted: false }
+      ];      
+      state.yellowBoxesVerticalBonuses = [
+        { score: 10, highlighted: false },
+        { score: 14, highlighted: false },
+        { score: 16, highlighted: false },
+        { score: 20, highlighted: false }
+      ];
+      state.yellowBoxesDiagonalBonuses = [
+        { color: 'black', type: 'plusOne', highlighted: false }
+      ];
+      state.yellowBoxes = [
+        ...Array.from(new Array(16), (val, index) => ({
+          label: yellowBoxesLabels[index],
+          value: yellowBoxesLabels[index] === ''
         }))
       ];
 
@@ -143,6 +173,13 @@ export default new Vuex.Store({
         index,
         Object.assign({}, state[`${type}s`][index], { available: true })
       );
+    },
+    addYellowBonus(state, payload) {
+      Vue.set(
+        state[`yellowBoxes${payload.type}Bonuses`],
+        payload.index,
+        Object.assign({}, state[`yellowBoxes${payload.type}Bonuses`][payload.index], { highlighted: true })
+      );
     }
   },
   actions: {
@@ -156,8 +193,48 @@ export default new Vuex.Store({
       context.commit('tickBox', payload);
       const bonus = context.getters[`${payload.color}Boxes`][payload.index].bonus;
       if (bonus) {
+        // Reroll and PluOnes
         if (bonus.type === 'reroll' || bonus.type === 'plusOne') {
           context.commit('addBonus', bonus.type);         
+        }
+      }
+      // Check bonuses if yellow
+      if (payload.color === 'yellow') {
+        const yellowBoxes = context.getters.yellowBoxes;
+        
+        // Horizontal
+        const row = Math.floor(payload.index / 4);
+        if (
+          yellowBoxes[4 * row].value &&
+          yellowBoxes[4 * row + 1].value &&
+          yellowBoxes[4 * row + 2].value &&
+          yellowBoxes[4 * row + 3].value
+        ) {
+          context.commit('addYellowBonus', { type: 'Horizontal', index: row });
+        }
+
+        // Vertical
+        const col = payload.index % 4;
+        if (
+          yellowBoxes[col].value &&
+          yellowBoxes[4 + col].value &&
+          yellowBoxes[8 + col].value &&
+          yellowBoxes[12 + col].value
+        ) {
+          context.commit('addYellowBonus', { type: 'Vertical', index: col });
+        }
+
+        // Diagonal
+        if ([0, 5, 10, 15].indexOf(payload.index) > -1) {
+          if (
+            yellowBoxes[0].value &&
+            yellowBoxes[5].value &&
+            yellowBoxes[10].value &&
+            yellowBoxes[15].value
+          ) {
+            context.commit('addYellowBonus', { type: 'Diagonal', index: 0 });
+            context.commit('addBonus', 'plusOne'); 
+          }
         }
       }
     },
@@ -182,6 +259,18 @@ export default new Vuex.Store({
     },
     plusOnes(state) {
       return state.plusOnes;
+    },
+    yellowBoxes(state) {
+      return state.yellowBoxes;
+    },
+    yellowBoxesHorizontalBonuses(state) {
+      return state.yellowBoxesHorizontalBonuses;
+    },
+    yellowBoxesVerticalBonuses(state) {
+      return state.yellowBoxesVerticalBonuses;
+    },
+    yellowBoxesDiagonalBonuses(state) {
+      return state.yellowBoxesDiagonalBonuses;
     },
     greenBoxes(state) {
       return state.greenBoxes;

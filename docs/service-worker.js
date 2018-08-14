@@ -14,7 +14,7 @@
 importScripts("https://storage.googleapis.com/workbox-cdn/releases/3.4.1/workbox-sw.js");
 
 importScripts(
-  "/pretty-clever/precache-manifest.69a9d8c1de642345085878b4ce2a32a0.js"
+  "/pretty-clever/precache-manifest.fd1b0757bcadde62648c5ad72085e713.js"
 );
 
 workbox.core.setCacheNameDetails({prefix: "pretty-clever"});

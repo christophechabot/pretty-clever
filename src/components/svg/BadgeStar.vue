@@ -68,6 +68,7 @@ export default {
   @import '@/global.scss';
 
   .badge-star {
+    position: relative;
     svg {
       color: $white;
       filter: drop-shadow( 2px 2px 4px $white );
